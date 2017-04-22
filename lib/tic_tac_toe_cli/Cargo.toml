@@ -1,0 +1,8 @@
+[package]
+name = "tic_tac_toe_cli"
+version = "0.1.0"
+authors = ["alisha <anejaalisha@yahoo.com>"]
+
+[dependencies]
+tic_tac_toe = {path = "../tic_tac_toe"}
+

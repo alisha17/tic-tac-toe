@@ -1,20 +1,24 @@
 use std::fmt;
 
 #[derive(Debug, Copy, Clone)]
-struct Board {
+pub struct Board {
     cells: [[Option<Player>; 3]; 3],
     next_player: Player,
 }
 
 impl Board {
-    fn new(starting_player: Player) -> Board {
+    pub fn new(starting_player: Player) -> Board {
         Board {
             cells: [[None; 3]; 3],
             next_player: starting_player,
         }
     }
 
-    fn choose_cell(&mut self, row: usize, column: usize) -> Result<(), &'static str> {
+    pub fn next_player(&self) -> Player {
+        self.next_player
+    }
+
+    pub fn choose_cell(&mut self, row: usize, column: usize) -> Result<(), &'static str> {
         if row > 2 || column > 2 {
             return Err("Index out of bounds.");
         } else if self.cells[row][column] != None {
@@ -29,7 +33,7 @@ impl Board {
         Ok(())
     }
 
-    fn winning_player(&mut self) -> Option<Player> {
+    pub fn winning_player(&mut self) -> Option<Player> {
         let win_elem = Some(match self.next_player {
                                 Player::O => Player::X,
                                 Player::X => Player::O,
@@ -86,7 +90,7 @@ impl fmt::Display for Board {
 }
 
 #[derive(Debug, Copy, Clone, PartialEq)]
-enum Player {
+pub enum Player {
     O,
     X,
 }
@@ -98,62 +102,4 @@ impl fmt::Display for Player {
             Player::X => write!(f, "X"),
         }
     }
-}
-
-fn main() {
-    use std::io::{self, BufRead}; //import std::io as well as std::io::BufRead
-
-    let mut board = Board::new(Player::O);
-    // println!("{}", board);
-
-    let stdin = io::stdin(); //for user input
-    let handle = stdin.lock();
-
-    let mut lines = handle
-        .lines()
-        .map(|x| x.unwrap())
-        .filter(|x| !x.is_empty());
-
-    loop {
-        println!("{}", board);
-
-        match board.winning_player() {
-            Some(winner) => {
-                println!("Congrats, {} is the winner!", winner);
-                break;
-            } 
-            None => println!("Next Input: {}", board.next_player),
-        };
-
-        println!("Enter the row number:");
-
-        let row = match lines.next() {
-            //Some(Ok(ref r)) if r.is_empty() => continue,
-            Some(r) => r.parse().unwrap(),
-            None => break,
-        };
-
-        println!("Enter the column number:");
-
-        let column = match lines.next() {
-            //Some(Ok(ref c)) if c.is_empty() => continue,
-            Some(c) => c.parse().unwrap(),
-            None => break,
-        };
-
-        match board.choose_cell(row, column) {
-            Ok(()) => (),
-            Err(e) => println!("Input row and column again {}", e),
-            // Err(_) => println!("Input row and column again"),
-        };
-
-        //Board::decide_winner(&mut board);
-
-
-
-
-
-    }
-
-
 }

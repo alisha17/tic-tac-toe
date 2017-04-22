@@ -1,6 +1,7 @@
-[package]
-name = "tic_tac_toe"
-version = "0.1.0"
-authors = ["alisha <anejaalisha@yahoo.com>"]
+[workspace]
 
-[dependencies]
+members = [
+    "lib/tic_tac_toe",
+    "lib/tic_tac_toe_cli/",
+    "lib/tic_tac_toe_gl",
+]
