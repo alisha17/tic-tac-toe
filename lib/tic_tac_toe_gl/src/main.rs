@@ -21,8 +21,13 @@ fn main() {
     let vertex3 = Vertex { position: [0.5, -0.25] };
     let shape = vec![vertex1, vertex2, vertex3];
 
+    let shape_indices = vec![0u8, 1, 2];
+
     let vertex_buffer = glium::VertexBuffer::new(&display, &shape).unwrap();
-    let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
+    let indices = glium::index::IndexBuffer::new(&display,
+                                                 glium::index::PrimitiveType::TrianglesList,
+                                                 &shape_indices)
+            .unwrap();
 
     let vertex_shader_src = r#"
         #version 140
