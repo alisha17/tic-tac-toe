@@ -6,4 +6,5 @@ authors = ["alisha <anejaalisha@yahoo.com>"]
 [dependencies]
 cpal = "0.4.4"
 glutin = "0.7.4"
+gl = "0.6.1"
 tic_tac_toe = {path = "../tic_tac_toe"}
