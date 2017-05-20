@@ -14,8 +14,12 @@ fn main() {
 
     let image = image::load(Cursor::new(&include_bytes!("/home/alisha/Desktop/cross.jpeg")[..]),
                             image::JPEG)
+
+    /*let raw_image = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/cross.png"));
+    let image = image::load(Cursor::new(&raw_image[..]),
+                            image::PNG)
             .unwrap()
-            .to_rgba();
+            .to_rgba();*/
 
     let image_dimensions = image.dimensions();
     let image = glium::texture::RawImage2d::from_raw_rgba_reversed(image.into_raw(),
