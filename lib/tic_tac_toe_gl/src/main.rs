@@ -13,92 +13,145 @@ fn main() {
 
 
     let image = image::load(Cursor::new(&include_bytes!("/home/alisha/Desktop/cross.jpeg")[..]),
-                            image::PNG)
+                            image::JPEG)
             .unwrap()
             .to_rgba();
+
     let image_dimensions = image.dimensions();
     let image = glium::texture::RawImage2d::from_raw_rgba_reversed(image.into_raw(),
                                                                    image_dimensions);
     let texture = glium::texture::Texture2d::new(&display, image).unwrap();
 
-    #[derive(Copy, Clone)]
-    struct Vertex {
-        position: [f32; 2],
-        tex_coords: [f32; 2],
-    }
+    let normal_vertex_buffer = {
+        #[derive(Copy, Clone)]
+        struct Vertex {
+            position: [f32; 2],
+        }
 
-    implement_vertex!(Vertex, position, tex_coords);
+        implement_vertex!(Vertex, position);
 
-    let vertex1 = Vertex { position: [0.0, 0.0] };
-    let vertex2 = Vertex { position: [0.6, 0.0] };
-    let vertex3 = Vertex { position: [0.6, 0.6] };
-    let vertex4 = Vertex { position: [0.0, 0.6] };
-    let vertex5 = Vertex { position: [0.2, 0.8] };
-    let vertex6 = Vertex { position: [0.2, -0.2] };
-    let vertex7 = Vertex { position: [0.4, 0.8] };
-    let vertex8 = Vertex { position: [0.4, -0.2] };
-    let vertex9 = Vertex {
-        position: [-0.5, -0.5],
-        tex_coords: [0.0, 0.0],
-    };
-    let vertex10 = Vertex {
-        position: [0.0, 0.5],
-        tex_coords: [0.0, 1.0],
-    };
-    let vertex11 = Vertex {
-        position: [0.5, -0.25],
-        tex_coords: [1.0, 0.0],
+        glium::VertexBuffer::new(&display,
+                                 &[Vertex { position: [0.0, 0.0] },
+                                   Vertex { position: [0.6, 0.0] },
+                                   Vertex { position: [0.6, 0.6] },
+                                   Vertex { position: [0.0, 0.6] },
+                                   Vertex { position: [0.2, 0.8] },
+                                   Vertex { position: [0.2, -0.2] },
+                                   Vertex { position: [0.4, 0.8] },
+                                   Vertex { position: [0.4, -0.2] }])
+                .unwrap()
     };
 
-    let shape = vec![vertex1, vertex2, vertex3, vertex4, vertex5, vertex6, vertex7, vertex8,
-                     vertex9, vertex10, vertex11];
 
-    let shape_indices = vec![1u8, 0, 3, 2];
+    let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::LinesList,&[1u8, 0, 3, 2]).unwrap();
 
-    let vertex_buffer = glium::VertexBuffer::new(&display, &shape).unwrap();
-    let indices = glium::index::NoIndices(glium::index::PrimitiveType::LinesList);
 
-    let vertex_shader_src = r#"
+    let texture_vertex_buffer = {
+
+            #[derive(Copy, Clone, Debug)]
+            struct Vertex {
+                position: [f32; 2],
+                tex_coords: [f32; 2],
+            }
+
+            implement_vertex!(Vertex, position, tex_coords);
+
+            glium::VertexBuffer::new(&display, &[Vertex {
+                position: [-0.5, -0.5],
+                tex_coords: [0.0, 0.0],
+            },
+            Vertex{
+                position: [0.0, 0.5],
+                tex_coords: [0.0, 1.0],
+            },
+            Vertex {
+                position: [0.5, -0.25],
+                tex_coords: [1.0, 0.0],
+            }
+              ])
+                .unwrap()
+    }; 
+
+    let texindices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
+
+    
+
+    let program =
+        glium::Program::from_source(&display,  r#"
         #version 140
 
+        in vec2 position;
+
+        void main() {
+            gl_Position = vec4(position, 0.0, 1.0);
+        }
+    "# ,
+        r#"
+        #version 140
+
+        out vec4 color;
+
+        void main() {
+            color = vec4(1.0, 0.0, 0.0, 1.0);
+        }
+    "#, 
+        None)
+            .unwrap();
+
+
+    let tprogram =
+        glium::Program::from_source(&display, 
+        r#"
+        #version 140
+   
         in vec2 position;
         in vec2 tex_coords;
         out vec2 v_tex_coords;
 
         void main() {
-             v_tex_coords = tex_coords;
-            gl_Position = vec4(position, 0.0, 1.0);
-        }
-    "#;
+           v_tex_coords = tex_coords;
+           gl_Position = vec4(position, 0.0, 1.0);
+        }"#,  
 
-    let fragment_shader_src = r#"
+       r#"
         #version 140
 
         in vec2 v_tex_coords;
         out vec4 color;
+
         uniform sampler2D tex;
 
         void main() {
-            color = vec4(1.0, 0.0, 0.0, 1.0);
-            color1 = texture(tex, v_tex_coords);
-        }
-    "#;
-
-    let program =
-        glium::Program::from_source(&display, vertex_shader_src, fragment_shader_src, None)
+            color = texture(tex, v_tex_coords);
+        }"#
+        , None)
             .unwrap();
 
     loop {
         let mut target = display.draw();
+        let mut ttarget = display.draw();
         target.clear_color(0.0, 0.0, 1.0, 1.0);
+        ttarget.clear_color(0.0, 0.0, 1.0, 1.0);
+        let uniforms = uniform! {
+            tex: &texture,
+        };
+
         target
-            .draw(&vertex_buffer,
+            .draw(&normal_vertex_buffer,
                   &indices,
                   &program,
                   &glium::uniforms::EmptyUniforms,
                   &Default::default())
             .unwrap();
         target.finish().unwrap();
+        ttarget
+            .draw(&texture_vertex_buffer,
+                  &texindices,
+                  &tprogram,
+                  &uniforms,
+                  &Default::default())
+            .unwrap();
+        ttarget.finish().unwrap();
 
         for ev in display.poll_events() {
             match ev {
