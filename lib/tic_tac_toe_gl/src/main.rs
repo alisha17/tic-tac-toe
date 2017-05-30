@@ -13,31 +13,31 @@ fn main() {
 
 
    // Load cross
-    /*let raw_image = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/cross.png"));
-    let image = image::load(Cursor::new(&raw_image[..]),
+   /*let raw_image = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/cross.png"));
+     let image = image::load(Cursor::new(&raw_image[..]),
                           image::PNG).unwrap().to_rgba(); */
                         
     let image = image::load(Cursor::new(&include_bytes!("/home/alisha/Desktop/cross.jpeg")[..]),
                           image::JPEG).unwrap().to_rgba();
 
-     let image_dimensions = image.dimensions();
-     let image = glium::texture::RawImage2d::from_raw_rgba_reversed(image.into_raw(),
+    let image_dimensions = image.dimensions();
+    let image = glium::texture::RawImage2d::from_raw_rgba_reversed(image.into_raw(),
                                                                     image_dimensions);
-     let texture = glium::texture::Texture2d::new(&display, image).unwrap();
+    let texture = glium::texture::Texture2d::new(&display, image).unwrap();
 
    // Load zero  
 
     let image_zero = image::load(Cursor::new(&include_bytes!("/home/alisha/Desktop/images.png")[..]),
                           image::PNG).unwrap().to_rgba();
 
-     let image_dimensions_zero = image_zero.dimensions();
-     let image_zero = glium::texture::RawImage2d::from_raw_rgba_reversed(image_zero.into_raw(),
+    let image_dimensions_zero = image_zero.dimensions();
+    let image_zero = glium::texture::RawImage2d::from_raw_rgba_reversed(image_zero.into_raw(),
                                                                     image_dimensions_zero);
-     let texture_zero = glium::texture::Texture2d::new(&display, image_zero).unwrap();
+    let texture_zero = glium::texture::Texture2d::new(&display, image_zero).unwrap();
 
    // Buffer for board  
 
-     let normal_vertex_buffer = {
+    let normal_vertex_buffer = {
         #[derive(Copy, Clone)]
         struct Vertex {
             position: [f32; 2],
@@ -66,33 +66,32 @@ fn main() {
    // Buffer for cross 
 
     let texture_vertex_buffer = {
+        #[derive(Copy, Clone, Debug)]
+        struct Vertex {
+            position: [f32; 2],
+            tex_coords: [f32; 2],
+        }
 
-            #[derive(Copy, Clone, Debug)]
-            struct Vertex {
-                position: [f32; 2],
-                tex_coords: [f32; 2],
-            }
+        implement_vertex!(Vertex, position, tex_coords);
 
-            implement_vertex!(Vertex, position, tex_coords);
-
-            glium::VertexBuffer::new(&display, &[Vertex {
-                position: [0.5, 0.3],
-                tex_coords: [0.0, 0.0],
-            },
-            Vertex{
-                position: [0.5, 0.5],
-                tex_coords: [0.0, 1.0],
-            },
-            Vertex {
-                position: [0.7, 0.5],
-                tex_coords: [1.0, 1.0],
-            },
-            Vertex {
-                position: [0.7, 0.3],
-                tex_coords: [1.0, 0.0],
-            }
-              ])
-                .unwrap()
+        glium::VertexBuffer::new(&display, &[Vertex {
+            position: [0.5, 0.3],
+            tex_coords: [0.0, 0.0],
+        },
+        Vertex{
+            position: [0.5, 0.5],
+            tex_coords: [0.0, 1.0],
+        },
+        Vertex {
+            position: [0.7, 0.5],
+            tex_coords: [1.0, 1.0],
+        },
+        Vertex {
+            position: [0.7, 0.3],
+            tex_coords: [1.0, 0.0],
+        }
+            ])
+            .unwrap()
     }; 
  
     let shape_indices = vec![1u8, 0, 2, 0, 3, 2];
@@ -101,47 +100,46 @@ fn main() {
                                                  glium::index::PrimitiveType::TrianglesList,
                                                  &shape_indices).unwrap();
 
-    //let texindices = glium::index::NoIndices(glium::index::PrimitiveType::LineStrip);
+    // let texindices = glium::index::NoIndices(glium::index::PrimitiveType::LineStrip);
 
-// Buffer for zero   
+    // Buffer for zero   
 
- let texture_vertex_buffer_zero = {
+    let texture_vertex_buffer_zero = {
 
-            #[derive(Copy, Clone, Debug)]
-            struct Vertex {
-                position: [f32; 2],
-                tex_coords: [f32; 2],
-            }
+        #[derive(Copy, Clone, Debug)]
+        struct Vertex {
+            position: [f32; 2],
+            tex_coords: [f32; 2],
+        }
 
-            implement_vertex!(Vertex, position, tex_coords);
+        implement_vertex!(Vertex, position, tex_coords);
 
-            glium::VertexBuffer::new(&display, &[Vertex {
-                position: [0.5, 0.0],
-                tex_coords: [0.0, 0.0],
-            },
-            Vertex{
-                position: [0.5, 0.2],
-                tex_coords: [0.0, 1.0],
-            },
-            Vertex {
-                position: [0.7, 0.2],
-                tex_coords: [1.0, 1.0],
-            },
-            Vertex {
-                position: [0.7, 0.0],
-                tex_coords: [1.0, 0.0],
-            }
-              ])
-                .unwrap()
+        glium::VertexBuffer::new(&display, &[Vertex {
+            position: [0.5, 0.0],
+            tex_coords: [0.0, 0.0],
+        },
+        Vertex{
+            position: [0.5, 0.2],
+            tex_coords: [0.0, 1.0],
+        },
+        Vertex {
+            position: [0.7, 0.2],
+            tex_coords: [1.0, 1.0],
+        },
+        Vertex {
+            position: [0.7, 0.0],
+            tex_coords: [1.0, 0.0],
+        }
+            ])
+            .unwrap()
     }; 
  
     let shape_indices = vec![1u8, 0, 2, 0, 3, 2];
-
     let texindices_zero = glium::index::IndexBuffer::new(&display,
                                                  glium::index::PrimitiveType::TrianglesList,
                                                  &shape_indices).unwrap();
 
-// Program 1
+   // Program 1 
 
     let program =
         glium::Program::from_source(&display,  r#"
