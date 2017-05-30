@@ -13,6 +13,10 @@ fn main() {
 
 
    // Load cross
+    /*let raw_image = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/cross.png"));
+    let image = image::load(Cursor::new(&raw_image[..]),
+                          image::PNG).unwrap().to_rgba(); */
+                        
     let image = image::load(Cursor::new(&include_bytes!("/home/alisha/Desktop/cross.jpeg")[..]),
                           image::JPEG).unwrap().to_rgba();
 
