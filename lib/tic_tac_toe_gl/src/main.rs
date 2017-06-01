@@ -12,13 +12,13 @@ fn main() {
         .unwrap();
 
 
-   // Load cross
-   /*let raw_image = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/cross.png"));
+    // Load cross
+     let raw_image = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/cross.png"));
      let image = image::load(Cursor::new(&raw_image[..]),
-                          image::PNG).unwrap().to_rgba(); */
+                          image::PNG).unwrap().to_rgba(); 
                         
-    let image = image::load(Cursor::new(&include_bytes!("/home/alisha/Desktop/cross.jpeg")[..]),
-                          image::JPEG).unwrap().to_rgba();
+    /*let image = image::load(Cursor::new(&include_bytes!("/home/alisha/Desktop/cross.jpeg")[..]),
+                          //image::JPEG).unwrap().to_rgba();*/
 
     let image_dimensions = image.dimensions();
     let image = glium::texture::RawImage2d::from_raw_rgba_reversed(image.into_raw(),
@@ -26,9 +26,12 @@ fn main() {
     let texture = glium::texture::Texture2d::new(&display, image).unwrap();
 
    // Load zero  
-
-    let image_zero = image::load(Cursor::new(&include_bytes!("/home/alisha/Desktop/images.png")[..]),
+    let raw_image_zero = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/zero.png"));
+    let image_zero = image::load(Cursor::new(&raw_image_zero[..]),
                           image::PNG).unwrap().to_rgba();
+
+    /*let image_zero = image::load(Cursor::new(&include_bytes!("/home/alisha/Desktop/images.png")[..]),
+                          image::PNG).unwrap().to_rgba();*/
 
     let image_dimensions_zero = image_zero.dimensions();
     let image_zero = glium::texture::RawImage2d::from_raw_rgba_reversed(image_zero.into_raw(),
