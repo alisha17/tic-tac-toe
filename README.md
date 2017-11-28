@@ -1,4 +1,4 @@
-##RUSTIC TIC TAC TOE##
+## RUSTIC TIC TAC TOE ##
 
 I have programmed the old-school game of Tic-Tac-Toe in Rust.
 
