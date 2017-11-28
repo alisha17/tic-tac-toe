@@ -1,6 +1,6 @@
-## RUSTIC TIC TAC TOE ##
+# TIC-TAC-TOE #
 
-I have programmed the old-school game of Tic-Tac-Toe in Rust.
+The old-school game of Tic-Tac-Toe in Rust.
 
 You can play the game in:
 * Command Line
